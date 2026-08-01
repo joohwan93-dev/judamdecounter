@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="신혼 내집마련">
 
-    <title>신혼 부부 주택 구매 플래너</title>
+    <title>신혼 부부 주택 구매 종합 플래너</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -59,17 +59,22 @@
         }
         .nav-tabs {
             display: flex;
-            justify-content: space-around;
+            overflow-x: auto;
+            white-space: nowrap;
             max-width: 600px;
             margin: 0 auto;
-            padding: 0 10px;
+            padding: 0 5px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
         }
         .tab-btn {
-            flex: 1;
+            flex: 0 0 auto;
             background: none;
             border: none;
-            padding: 10px 0;
-            font-size: 0.88rem;
+            padding: 10px 12px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-sub);
             border-bottom: 3px solid transparent;
@@ -117,7 +122,7 @@
             margin-bottom: 6px;
             font-size: 0.9rem;
         }
-        input[type="number"], select {
+        input[type="number"], select, textarea, input[type="text"] {
             width: 100%;
             height: 46px;
             padding: 8px 12px;
@@ -126,6 +131,11 @@
             font-size: 1rem;
             background-color: #fff;
             -webkit-appearance: none;
+        }
+        textarea {
+            height: 80px;
+            font-family: inherit;
+            resize: none;
         }
         .calc-btn {
             width: 100%;
@@ -173,7 +183,7 @@
             color: #dc2626 !important;
         }
 
-        /* Step Card for Guide */
+        /* Card & Checklist Elements */
         .step-card {
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -233,9 +243,9 @@
         }
         .check-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 0.88rem;
             cursor: pointer;
             user-select: none;
@@ -249,6 +259,68 @@
             accent-color: var(--accent);
             cursor: pointer;
             flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* 항목 추가 UI 스타일 */
+        .add-item-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed #a7f3d0;
+        }
+        .add-item-input {
+            flex: 1;
+            height: 38px !important;
+            font-size: 0.85rem !important;
+        }
+        .add-item-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 14px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .reset-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.75rem;
+            text-decoration: underline;
+            cursor: pointer;
+            float: right;
+            margin-top: 5px;
+        }
+
+        /* Copy Special Terms UI */
+        .special-term-card {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .special-term-text {
+            font-size: 0.85rem;
+            color: #334155;
+            white-space: pre-line;
+            margin-bottom: 8px;
+        }
+        .copy-btn {
+            background-color: #475569;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: right;
         }
 
         /* Process Flow UI */
@@ -299,7 +371,9 @@
         <h1 class="header-title">💍 신혼 부부 주택 구매 계획</h1>
         <nav class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('guide')">구매 가이드</button>
+            <button class="tab-btn" onclick="switchTab('imjang')">현장 임장 체크</button>
             <button class="tab-btn" onclick="switchTab('calc')">주담대 계산기</button>
+            <button class="tab-btn" onclick="switchTab('special')">필수 특약 모음</button>
             <button class="tab-btn" onclick="switchTab('repay')">전세대출 상환</button>
         </nav>
     </header>
@@ -319,6 +393,7 @@
                     <li><b>보유 현금 계산:</b> 전세 보증금 반환 예정액 + 예적금 + 기타 자산 확정</li>
                     <li><b>타겟 매매가 설정:</b> 디딤돌 신혼 한도(3.2억) 기준 5억 원 이하 매물 타겟팅</li>
                     <li><b>부대비용 예산 세우기:</b> 취득세, 복비, 법무비 등 <b>매매가의 약 2.5~3%(약 1,000~1,200만 원)</b> 별도 예비 자금 확보</li>
+                    <li><b>유치원 교사 배우자 소득 합산 주의:</b> 원천징수영수증 상 '총급여'(정부 수당 포함, 비과세 제외) 기준 부부합산 <b>8,500만 원 이하</b> 확인 필수</li>
                 </ul>
             </div>
 
@@ -343,8 +418,8 @@
                     <span class="step-title">매물 탐색 & 임장 (잔금 2~3개월 전)</span>
                 </div>
                 <ul>
-                    <li><b>온라인 손품:</b> 네이버 부동산 / 아실 등으로 target 단지 시세 및 매물 조사</li>
-                    <li><b>현장 임장:</b> 누수, 곰팡이, 수압, 일조량, 주차 공간 및 층간소음 점검</li>
+                    <li><b>온라인 손품:</b> 네이버 부동산 / 아실 등으로 수원 지역 Target 단지 시세 및 매물 조사</li>
+                    <li><b>현장 임장:</b> 상단 [현장 임장 체크] 탭을 활용해 수압, 곰팡이, 난방, 누수, 소음 등 꼼꼼히 점검</li>
                 </ul>
             </div>
 
@@ -354,13 +429,11 @@
                     <span class="step-title">은행 가상담 & 매매계약 체결 (잔금 2개월 전)</span>
                 </div>
                 <ul>
-                    <li><b>은행 가상담:</b> 주택 매매계약 전 디딤돌대출 가능 여부 및 한도(3.2억) 확인</li>
+                    <li><b>매도인(판매자) 체크:</b> 등기부등본(가압류, 근저당 확인), 건축물대장(위반건축물 여부 - 디딤돌 대출 불가 사유) 확인</li>
+                    <li><b>은행 가상담:</b> 주택 매매계약 전 디딤돌대출 가능 여부 및 한도(3.2억) 사전 확인</li>
                     <li><b>매매 계약 작성:</b> 계약금(보통 10%) 입금 및 **대출 미승인 시 계약금 반환 특약** 필수 작성</li>
                     <li><b>일정 맞추기:</b> 기존 전세집 세입자의 입주일과 새 집 잔금일을 **동일한 날짜**로 지정</li>
                 </ul>
-                <div class="tip-box">
-                    <b>⚠️ 핵심 특약 문구:</b> "매수인의 귀책사유 없이 디딤돌대출이 미승인되거나 한도가 감액될 경우, 본 계약은 무효로 하며 수령한 계약금은 즉시 반환한다."
-                </div>
             </div>
 
             <div class="step-card">
@@ -370,21 +443,96 @@
                 </div>
                 <ul>
                     <li><b>대출 신청:</b> 기금e든든 홈페이지/앱을 통해 잔금 30일 전 대출 신청</li>
+                    <li><b>신용 관리:</b> 계약 후 잔금일까지 **신규 신용대출, 카드론 절대 금지** (대출 한도 감액 위험)</li>
                     <li><b>잔금일 당일:</b> 전세 보증금 수령 ➔ 기존 전세대출 상환 ➔ 주담대 실행 ➔ 매매 잔금 지급</li>
                 </ul>
             </div>
 
-            <div class="checklist-box">
+            <div class="checklist-box" data-group="documents">
                 <div class="checklist-title">📋 은행 제출 & 필수 서류 체크리스트</div>
-                <label class="check-item"><input type="checkbox"> <span><b>주민등록등본/초본</b> (상세, 최근 1개월 이내)</span></label>
-                <label class="check-item"><input type="checkbox"> <span><b>가족관계증명원 & 혼인관계증명서</b> (상세)</span></label>
-                <label class="check-item"><input type="checkbox"> <span><b>재직증명서 & 원천징수영수증</b> (최근 2년)</span></label>
-                <label class="check-item"><input type="checkbox"> <span><b>매매계약서 원본 & 부동산 거래신고필증</b></span></label>
-                <label class="check-item"><input type="checkbox"> <span><b>인감증명서 2부, 인감도장, 신분증</b></span></label>
+                <div class="checklist-items">
+                    <label class="check-item"><input type="checkbox" id="doc_1"> <span><b>주민등록등본/초본</b> (상세, 최근 1개월 이내)</span></label>
+                    <label class="check-item"><input type="checkbox" id="doc_2"> <span><b>가족관계증명원 & 혼인관계증명서</b> (상세)</span></label>
+                    <label class="check-item"><input type="checkbox" id="doc_3"> <span><b>재직증명서 & 원천징수영수증</b> (최근 2년)</span></label>
+                    <label class="check-item"><input type="checkbox" id="doc_4"> <span><b>매매계약서 원본 & 부동산 거래신고필증</b></span></label>
+                    <label class="check-item"><input type="checkbox" id="doc_5"> <span><b>인감증명서 2부, 인감도장, 신분증</b></span></label>
+                </div>
+                <div class="add-item-box">
+                    <input type="text" class="add-item-input" placeholder="새 필수 서류 항목 추가...">
+                    <button class="add-item-btn" onclick="addNewItem('documents', this)">추가</button>
+                </div>
             </div>
         </section>
 
-        <!-- TAB 2: 주담대 계산기 -->
+        <!-- TAB 2: 현장 임장 체크리스트 -->
+        <section id="tab-imjang" class="page-content">
+            <h2>🔍 현장 임장 실전 체크리스트</h2>
+            <div class="tip-box" style="margin-top:0; margin-bottom: 15px;">
+                <b>📱 임장 팁:</b> 집 방문 시 세면대 물을 틀어둔 상태에서 변기 물을 함께 내려보세요!
+            </div>
+
+            <div class="checklist-box" style="margin-top:0;" data-group="imjang_water">
+                <div class="checklist-title">1. 물 & 수압 / 배수</div>
+                <div class="checklist-items">
+                    <label class="check-item"><input type="checkbox" id="water_1"> <span><b>수압:</b> 주방, 화장실 수전 동시 사용 시 수압 저하 여부</span></label>
+                    <label class="check-item"><input type="checkbox" id="water_2"> <span><b>배수:</b> 싱크대, 욕실 바닥 물이 잘 빠지는지 확인</span></label>
+                    <label class="check-item"><input type="checkbox" id="water_3"> <span><b>변기:</b> 물 내림 후 역류나 이상 소음이 없는지 점검</span></label>
+                </div>
+                <div class="add-item-box">
+                    <input type="text" class="add-item-input" placeholder="수압/배수 항목 추가...">
+                    <button class="add-item-btn" onclick="addNewItem('imjang_water', this)">추가</button>
+                </div>
+            </div>
+
+            <div class="checklist-box" data-group="imjang_leak">
+                <div class="checklist-title">2. 누수 & 곰팡이</div>
+                <div class="checklist-items">
+                    <label class="check-item"><input type="checkbox" id="leak_1"> <span><b>곰팡이:</b> 베란다, 세탁실, 외벽 접촉 구석, 장롱 뒤 확인</span></label>
+                    <label class="check-item"><input type="checkbox" id="leak_2"> <span><b>천장 누수:</b> 도배지가 울거나 얼룩진 흔적이 있는지 확인</span></label>
+                    <label class="check-item"><input type="checkbox" id="leak_3"> <span><b>욕실 천장:</b> 점검구를 열어 위층 배관 누수 흔적 확인</span></label>
+                </div>
+                <div class="add-item-box">
+                    <input type="text" class="add-item-input" placeholder="누수/곰팡이 항목 추가...">
+                    <button class="add-item-btn" onclick="addNewItem('imjang_leak', this)">추가</button>
+                </div>
+            </div>
+
+            <div class="checklist-box" data-group="imjang_heating">
+                <div class="checklist-title">3. 난방 & 창호 (단열)</div>
+                <div class="checklist-items">
+                    <label class="check-item"><input type="checkbox" id="heat_1"> <span><b>난방 방식:</b> 지역난방 / 개별난방 확인 및 분배기 부식 점검</span></label>
+                    <label class="check-item"><input type="checkbox" id="heat_2"> <span><b>보일러 연식:</b> 보일러 제조년월 확인 (10년 이상 시 교체 고려)</span></label>
+                    <label class="check-item"><input type="checkbox" id="heat_3"> <span><b>샷시(창호):</b> 이중창 여부 및 창틀 실리콘 들뜸/틈새 점검</span></label>
+                </div>
+                <div class="add-item-box">
+                    <input type="text" class="add-item-input" placeholder="난방/단열 항목 추가...">
+                    <button class="add-item-btn" onclick="addNewItem('imjang_heating', this)">추가</button>
+                </div>
+            </div>
+
+            <div class="checklist-box" data-group="imjang_etc">
+                <div class="checklist-title">4. 기타 환경 & 입지</div>
+                <div class="checklist-items">
+                    <label class="check-item"><input type="checkbox" id="etc_1"> <span><b>소음:</b> 층간소음, 도로/철도 소음 확인</span></label>
+                    <label class="check-item"><input type="checkbox" id="etc_2"> <span><b>채광 & 일조:</b> 앞동에 의한 햇빛 가림 현상 확인</span></label>
+                    <label class="check-item"><input type="checkbox" id="etc_3"> <span><b>주차 공간:</b> 세대당 주차 대수 및 밤시간 주차 난이도 파악</span></label>
+                </div>
+                <div class="add-item-box">
+                    <input type="text" class="add-item-input" placeholder="환경/입지 항목 추가...">
+                    <button class="add-item-btn" onclick="addNewItem('imjang_etc', this)">추가</button>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label for="imjangMemo">📝 해당 매물 메모 (동/호수, 특이사항 등)</label>
+                <textarea id="imjangMemo" placeholder="예: 104동 802호 - 샷시 교체되어 있음, 주방 수압 약간 약함, 잔금일 10/25 협의 가능"></textarea>
+            </div>
+            
+            <button class="reset-btn" onclick="resetChecklistData()">⚠️ 체크리스트 데이터 초기화</button>
+            <div style="clear:both;"></div>
+        </section>
+
+        <!-- TAB 3: 주담대 계산기 -->
         <section id="tab-calc" class="page-content">
             <h2>💰 디딤돌 대출 계산기</h2>
             
@@ -447,7 +595,39 @@
             </div>
         </section>
 
-        <!-- TAB 3: 전세대출 상환 가이드 -->
+        <!-- TAB 4: 필수 특약 모음집 -->
+        <section id="tab-special" class="page-content">
+            <h2>📜 계약서 필수 특약 모음집</h2>
+            <div class="tip-box" style="margin-top:0; margin-bottom: 15px;">
+                <b>💡 활용법:</b> 계약서 작성 시 공인중개사에게 아래 특약사항을 계약서에 그대로 반영해 달라고 요청하세요. [복사] 버튼을 누르면 문구가 복사됩니다.
+            </div>
+
+            <div class="special-term-card">
+                <button class="copy-btn" onclick="copyText('term1')">복사</button>
+                <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; color: var(--primary);">1. 대출 미승인 시 계약금 반환 (가장 중요한 특약)</div>
+                <div class="special-term-text" id="term1">본 계약은 매수인의 디딤돌대출 실행을 전제로 하며, 매수인의 귀책사유 없이 금융기관의 정책 변경이나 디딤돌대출 미승인 또는 한도 감액 발생 시 본 계약은 무효로 하고, 매도인은 수령한 계약금을 즉시 전액 반환한다.</div>
+            </div>
+
+            <div class="special-term-card">
+                <button class="copy-btn" onclick="copyText('term2')">복사</button>
+                <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; color: var(--primary);">2. 근저당권 말소 조건</div>
+                <div class="special-term-text" id="term2">매도인은 잔금 지급일 이전까지 등기부등본상의 근저당권 및 제반 권리제한 사항을 모두 상환 및 말소하기로 하며, 잔금 당일 완납 영수증을 제출한다.</div>
+            </div>
+
+            <div class="special-term-card">
+                <button class="copy-btn" onclick="copyText('term3')">복사</button>
+                <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; color: var(--primary);">3. 권리 상태 유지</div>
+                <div class="special-term-text" id="term3">매도인은 계약 체결 당시의 등기부등본 권리 상태를 잔금 이행 완료일까지 유지해야 하며, 이 기간 중 가압류, 근저당 등 새로운 권리 변동을 일으키지 않는다.</div>
+            </div>
+
+            <div class="special-term-card">
+                <button class="copy-btn" onclick="copyText('term4')">복사</button>
+                <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; color: var(--primary);">4. 시설물 수리 및 누수 책임</div>
+                <div class="special-term-text" id="term4">매도인은 잔금일 전까지 발견되지 않은 중대한 하자(누수, 보일러 고장 등)에 대해 잔금일 이후 6개월 이내에 발생하는 경우 민법에 따라 보수 책임을 진다.</div>
+            </div>
+        </section>
+
+        <!-- TAB 5: 전세대출 상환 가이드 -->
         <section id="tab-repay" class="page-content">
             <h2>🔄 전세집 정리 & 대출 상환 가이드</h2>
 
@@ -517,18 +697,145 @@
 
     <!-- Script -->
     <script>
+        // TAB 전환 함수
         function switchTab(tabName) {
             document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
             document.getElementById('tab-' + tabName).classList.add('active');
             
-            const btnIndex = tabName === 'guide' ? 0 : tabName === 'calc' ? 1 : 2;
-            document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+            const btnMap = { 'guide': 0, 'imjang': 1, 'calc': 2, 'special': 3, 'repay': 4 };
+            document.querySelectorAll('.tab-btn')[btnMap[tabName]].classList.add('active');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // 특약 문구 복사 기능
+        function copyText(elementId) {
+            var text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                alert('특약 문구가 복사되었습니다. 계약서 작성 시 활용하세요!');
+            }, function(err) {
+                alert('복사 실패: 직접 텍스트를 선택해 복사해 주세요.');
+            });
+        }
+
+        // --- 💾 데이터 저장 및 체크리스트 동적 관리 기능 --- //
+
+        // 페이지 로드 시 초기 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+
+            // 기존 및 새 체크박스 클릭 이벤트 바인딩 (이벤트 위임)
+            document.body.addEventListener('change', function(e) {
+                if (e.target.type === 'checkbox') {
+                    saveCheckStates();
+                }
+            });
+
+            // 임장 메모 입력 시 자동 저장
+            document.getElementById('imjangMemo').addEventListener('input', function() {
+                localStorage.setItem('imjang_memo_data', this.value);
+            });
+        });
+
+        // 새 항목 추가 함수
+        function addNewItem(groupKey, btnEl) {
+            const container = btnEl.closest('.checklist-box');
+            const inputEl = container.querySelector('.add-item-input');
+            const itemsContainer = container.querySelector('.checklist-items');
+            const text = inputEl.value.trim();
+
+            if (!text) {
+                alert('추가할 내용을 입력해 주세요.');
+                return;
+            }
+
+            const uniqueId = groupKey + '_custom_' + Date.now();
+            
+            // DOM에 추가
+            const label = document.createElement('label');
+            label.className = 'check-item';
+            label.innerHTML = `<input type="checkbox" id="${uniqueId}"> <span>${escapeHtml(text)}</span>`;
+            itemsContainer.appendChild(label);
+
+            inputEl.value = '';
+
+            // 커스텀 항목 저장
+            saveCustomItems(groupKey, uniqueId, text);
+            saveCheckStates();
+        }
+
+        // 특수문자 이스케이프
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // 커스텀 추가 항목 저장
+        function saveCustomItems(groupKey, id, text) {
+            let customItems = JSON.parse(localStorage.getItem('checklist_custom_items') || '{}');
+            if (!customItems[groupKey]) {
+                customItems[groupKey] = [];
+            }
+            customItems[groupKey].push({ id: id, text: text });
+            localStorage.setItem('checklist_custom_items', JSON.stringify(customItems));
+        }
+
+        // 체크박스 상태 전체 저장
+        function saveCheckStates() {
+            const checkStates = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                if (cb.id) {
+                    checkStates[cb.id] = cb.checked;
+                }
+            });
+            localStorage.setItem('checklist_check_states', JSON.stringify(checkStates));
+        }
+
+        // 저장된 데이터 불러오기
+        function loadSavedData() {
+            // 1. 커스텀 추가한 항목들 불러와서 복원
+            const customItems = JSON.parse(localStorage.getItem('checklist_custom_items') || '{}');
+            for (const groupKey in customItems) {
+                const box = document.querySelector(`.checklist-box[data-group="${groupKey}"]`);
+                if (box) {
+                    const itemsContainer = box.querySelector('.checklist-items');
+                    customItems[groupKey].forEach(item => {
+                        const label = document.createElement('label');
+                        label.className = 'check-item';
+                        label.innerHTML = `<input type="checkbox" id="${item.id}"> <span>${escapeHtml(item.text)}</span>`;
+                        itemsContainer.appendChild(label);
+                    });
+                }
+            }
+
+            // 2. 체크 상태 복원
+            const checkStates = JSON.parse(localStorage.getItem('checklist_check_states') || '{}');
+            for (const id in checkStates) {
+                const cb = document.getElementById(id);
+                if (cb) {
+                    cb.checked = checkStates[id];
+                }
+            }
+
+            // 3. 메모 복원
+            const savedMemo = localStorage.getItem('imjang_memo_data');
+            if (savedMemo) {
+                document.getElementById('imjangMemo').value = savedMemo;
+            }
+        }
+
+        // 체크리스트 데이터 초기화
+        function resetChecklistData() {
+            if (confirm('모든 체크 상태와 추가하신 항목, 메모가 초기화됩니다. 계속하시겠습니까?')) {
+                localStorage.removeItem('checklist_custom_items');
+                localStorage.removeItem('checklist_check_states');
+                localStorage.removeItem('imjang_memo_data');
+                location.reload();
+            }
+        }
+
+        // --- 💰 디딤돌 대출 계산기 --- //
         document.getElementById('calcBtn').addEventListener('click', function() {
             calculate();
         });
@@ -551,14 +858,14 @@
             var ltvLimit = price * 0.7;
 
             var maxCap = 200000000;
-            var incomeText = "부부합산 연소득 6,000만원 이하 (순자산 5.11억원 이하)";
+            var incomeText = "부부합산 연소득 6,000만원 이하 (순자산 4.69억원 이하)";
 
             if (type === 'shinhon') {
                 maxCap = 320000000;
-                incomeText = "부부합산 연소득 <b>8,500만원 이하</b> (순자산 5.11억원 이하)";
+                incomeText = "부부합산 연소득 <b>8,500만원 이하</b> (순자산 4.69억원 이하)";
             } else if (type === 'first') {
                 maxCap = 240000000;
-                incomeText = "부부합산 연소득 <b>7,000만원 이하</b> (순자산 5.11억원 이하)";
+                incomeText = "부부합산 연소득 <b>7,000만원 이하</b> (순자산 4.69억원 이하)";
             }
 
             var maxHousePrice = (type === 'shinhon') ? 600000000 : 500000000;
