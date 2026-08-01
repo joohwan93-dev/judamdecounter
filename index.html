@@ -4,45 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- 아이폰 앱 전용 설정 (웹앱 모드) -->
+    <!-- 아이폰 Safari 웹앱 최적화 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="대출계산기">
+    <meta name="apple-mobile-web-app-title" content="신혼 내집마련">
 
-    <title>디딤돌 대출 & 이사 비용 계산기</title>
+    <title>신혼 부부 주택 구매 플래너</title>
     <style>
         :root {
-            --primary-color: #2563eb;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --text-color: #1e293b;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --accent: #059669;
+            --accent-light: #ecfdf5;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg);
+            color: var(--text-main);
             margin: 0;
-            padding: 15px;
+            padding: 0;
+            line-height: 1.6;
             -webkit-text-size-adjust: 100%;
-            touch-action: manipulation;
         }
+
+        /* Fixed Top Navigation Bar for iPhone */
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding-top: env(safe-area-inset-top);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            padding: 12px 0 6px 0;
+            margin: 0;
+        }
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px 0;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Container & Page Views */
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            box-sizing: border-box;
+            padding: 15px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
         }
+        .page-content {
+            display: none;
+            background: var(--card);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .page-content.active {
+            display: block;
+        }
+
+        /* Shared UI Elements */
         h2 {
             margin-top: 0;
-            color: var(--primary-color);
+            color: var(--primary);
             text-align: center;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border);
             padding-bottom: 12px;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
         }
         .form-group {
             margin-bottom: 15px;
@@ -55,34 +119,32 @@
         }
         input, select {
             width: 100%;
-            height: 44px;
+            height: 46px;
             padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
+            border: 1px solid var(--border);
+            border-radius: 8px;
             font-size: 1rem;
             background-color: #fff;
             -webkit-appearance: none;
         }
-        button {
+        .calc-btn {
             width: 100%;
             height: 48px;
-            background-color: var(--primary-color);
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
-            -webkit-tap-highlight-color: transparent;
         }
-        button:active {
-            background-color: #1d4ed8;
+        .calc-btn:active {
+            background-color: var(--primary-dark);
         }
         .result-box {
             margin-top: 20px;
-            background-color: #eff6ff;
+            background-color: var(--primary-light);
             border: 1px solid #bfdbfe;
             border-radius: 8px;
             padding: 15px;
@@ -94,7 +156,7 @@
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px dashed #cbd5e1;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
         .result-row:last-child {
             border-bottom: none;
@@ -104,144 +166,403 @@
         }
         .result-value {
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--primary);
             text-align: right;
         }
         .highlight {
             color: #dc2626 !important;
         }
+
+        /* Step Card for Guide */
+        .step-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .step-badge {
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #0f172a;
+        }
+        ul {
+            margin: 0;
+            padding-left: 18px;
+            font-size: 0.88rem;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .tip-box {
+            background-color: var(--warning-light);
+            border-left: 3px solid var(--warning);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #78350f;
+            margin-top: 10px;
+        }
+        .checklist-box {
+            background-color: var(--accent-light);
+            border: 1px solid #a7f3d0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        .checklist-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .check-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--accent);
+        }
+
+        /* Process Flow UI */
+        .process-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .step-flow-item {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .step-flow-num {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .step-flow-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-flow-desc {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>🏠 디딤돌 대출 계산기</h2>
-    
-    <div class="form-group">
-        <label for="housePrice">집값 (만원)</label>
-        <input type="number" id="housePrice" inputmode="numeric" placeholder="예: 50000 (5억인 경우)" value="50000">
+    <!-- 상단 고정 네비게이션 바 -->
+    <header class="header">
+        <h1 class="header-title">💍 신혼 부부 주택 구매 계획</h1>
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('guide')">구매 가이드</button>
+            <button class="tab-btn" onclick="switchTab('calc')">주담대 계산기</button>
+            <button class="tab-btn" onclick="switchTab('repay')">전세대출 상환</button>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <!-- TAB 1: 구매 가이드 -->
+        <section id="tab-guide" class="page-content active">
+            <h2>🏠 내 집 마련 단계별 로드맵</h2>
+
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-badge">STEP 1</span>
+                    <span class="step-title">자금 조달 & 금액대 계획 세우기</span>
+                </div>
+                <ul>
+                    <li><b>보유 현금 계산:</b> 전세 보증금 반환액 + 예적금 + 기타 자산 확정</li>
+                    <li><b>타겟 매매가 설정:</b> 디딤돌 신혼 한도(3.2억) 기준 5억 원 이하 매물 타겟팅</li>
+                    <li><b>부대비용 예산 세우기:</b> 취득세, 복비, 법무비 등 <b>매매가의 약 2.5~3%(약 1,000~1,200만 원)</b> 별도 예비 자금 확보</li>
+                </ul>
+                <div class="tip-box">
+                    <b>💡 꿀팁:</b> 잔금 당일 전세대출 상환과 매매 잔금이 동시에 이루어지므로, 현금 유동성 타임라인을 일자별로 적어두는 것이 안전합니다.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-badge">STEP 2</span>
+                    <span class="step-title">후보 집 확인 (시세 파악 & 임장)</span>
+                </div>
+                <ul>
+                    <li><b>온라인 손품:</b> 네이버 부동산 / 아실 등으로 target 단지 시세 조사</li>
+                    <li><b>현장 임장(집 확인):</b>
+                        <ul>
+                            <li>누수/곰팡이 여부 (베란다, 창틀, 싱크대 하부)</li>
+                            <li>수압 및 배수 (세면대, 변기, 주방 동시에 물 틀어보기)</li>
+                            <li>일조량, 채광 및 주차 공간 점검</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="tip-box">
+                    <b>💡 꿀팁:</b> 낮 방문(채광/누수)과 밤 방문(주차난/층간소음)을 모두 진행해 보세요.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-badge">STEP 3</span>
+                    <span class="step-title">은행 대출 가상담 (계약 전 필수!)</span>
+                </div>
+                <ul>
+                    <li><b>방문 은행:</b> 디딤돌 취급 은행 (국민, 농협, 신한, 우리, 하나 등)</li>
+                    <li><b>지참 서류:</b> 소득증빙, 재직증명서, 신분증, 현재 전세계약서</li>
+                    <li><b>상담 항목:</b> 3.2억 한도 완제 가능 여부, 기존 전세대출 당일 상환 조건부 승인 확인</li>
+                </ul>
+                <div class="tip-box">
+                    <b>⚠️ 핵심 주의사항:</b> 신용도나 기존 대출 상황에 따라 한도가 줄 수 있으므로 계약 전 가심사는 필수입니다.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-badge">STEP 4</span>
+                    <span class="step-title">매매 계약 체결 & 특약 작성</span>
+                </div>
+                <ul>
+                    <li><b>등기부등본 확인:</b> 가압류, 근저당, 소유자 일치 여부 확인</li>
+                    <li><b>필수 특약사항 명시:</b>
+                        <br><i>"매수인의 귀책사유 없이 디딤돌대출이 미승인되거나 한도가 감액될 경우, 본 계약은 무효로 하며 수령한 계약금은 즉시 반환한다."</i></li>
+                </ul>
+            </div>
+
+            <div class="checklist-box">
+                <div class="checklist-title">📋 은행 제출 & 필수 서류 체크리스트</div>
+                <div class="check-item"><input type="checkbox"> <span><b>주민등록등본/초본</b> (상세, 최근 1개월 이내)</span></div>
+                <div class="check-item"><input type="checkbox"> <span><b>가족관계증명원 & 혼인관계증명서</b> (상세)</span></div>
+                <div class="check-item"><input type="checkbox"> <span><b>재직증명서 & 원천징수영수증</b> (최근 2년)</span></div>
+                <div class="check-item"><input type="checkbox"> <span><b>매매계약서 원본 & 부동산 거래신고필증</b></span></div>
+                <div class="check-item"><input type="checkbox"> <span><b>인감증명서 2부, 인감도장, 신분증</b></span></div>
+            </div>
+        </section>
+
+        <!-- TAB 2: 주담대 계산기 -->
+        <section id="tab-calc" class="page-content">
+            <h2>💰 디딤돌 대출 계산기</h2>
+            
+            <div class="form-group">
+                <label for="housePrice">집값 (만원)</label>
+                <input type="number" id="housePrice" inputmode="numeric" placeholder="예: 50000 (5억인 경우)" value="50000">
+            </div>
+
+            <div class="form-group">
+                <label for="interestRate">대출 금리 (%)</label>
+                <input type="number" step="0.01" id="interestRate" inputmode="decimal" placeholder="예: 3.0" value="3.0">
+            </div>
+
+            <div class="form-group">
+                <label for="loanPeriod">대출 기간 (년)</label>
+                <select id="loanPeriod">
+                    <option value="10">10년</option>
+                    <option value="15">15년</option>
+                    <option value="20">20년</option>
+                    <option value="30" selected>30년</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="userType">가구 유형</label>
+                <select id="userType">
+                    <option value="shinhon" selected>신혼가구 (최대 3.2억 한도)</option>
+                    <option value="first">생애최초 일반가구 (최대 2.4억 한도)</option>
+                    <option value="normal">일반가구 (최대 2.0억 한도)</option>
+                </select>
+            </div>
+
+            <button type="button" class="calc-btn" id="calcBtn">계산하기</button>
+
+            <div class="result-box" id="resultBox">
+                <div class="result-row">
+                    <span class="result-title">최대 대출 가능 금액</span>
+                    <span class="result-value" id="maxLoan">0 원</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-title">매달 원리금 상환액</span>
+                    <span class="result-value" id="monthlyPayment">0 원</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-title">필요 최소 순수 잔금</span>
+                    <span class="result-value" id="neededCash">0 원</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-title">예상 복비 (상한)</span>
+                    <span class="result-value" id="brokerFee">0 원</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-title">총 준비 권장 현금</span>
+                    <span class="result-value highlight" id="totalCash">0 원</span>
+                </div>
+                <div class="result-row" style="flex-direction: column; align-items: flex-start; gap: 5px; margin-top: 10px;">
+                    <span class="result-title">💡 자격 신청 가능 부부합산 소득 조건</span>
+                    <span id="incomeCondition" style="font-size: 0.85rem; color: #475569; line-height: 1.4;"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 전세대출 상환 가이드 -->
+        <section id="tab-repay" class="page-content">
+            <h2>🔄 전세대출 중도 상환 & 이사 가이드</h2>
+
+            <div class="tip-box" style="margin-top:0;">
+                <b>💡 핵심 요약:</b> 별도 월세를 구하지 않고, <b>잔금일 당일 하루</b>에 [전세 보증금 반환 ➔ 전세대출 상환 ➔ 주담대 실행 ➔ 매매 잔금 처리]를 동시에 진행합니다.
+            </div>
+
+            <h3 style="font-size: 1.05rem; margin-top:20px; color:#0f172a;">1. 잔금일 당일 처리 순서 (동시이행)</h3>
+            <div class="process-flow">
+                <div class="step-flow-item">
+                    <div class="step-flow-num">1</div>
+                    <div>
+                        <div class="step-flow-title">오전 | 기존 전세집 퇴거</div>
+                        <div class="step-flow-desc">집주인에게 보증금 받음 ➔ 기존 전세대출 즉시 상환</div>
+                    </div>
+                </div>
+                <div class="step-flow-item">
+                    <div class="step-flow-num">2</div>
+                    <div>
+                        <div class="step-flow-title">정오 | 주택담보대출 실행</div>
+                        <div class="step-flow-desc">새 집 주담대 실행 + 보유 자금(전세 보증금 잔액) 합산</div>
+                    </div>
+                </div>
+                <div class="step-flow-item">
+                    <div class="step-flow-num">3</div>
+                    <div>
+                        <div class="step-flow-title">오후 | 매매 잔금 치르기 & 입주</div>
+                        <div class="step-flow-desc">매도인에게 매매 잔금 지급 ➔ 이사 및 소유권 이전 등기</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.05rem; margin-top:20px; color:#0f172a;">2. 페널티 및 체크포인트</h3>
+            <ul>
+                <li><b>중개수수료(복비):</b> 중도해지 시 세입자 부담으로 다음 세입자 복비를 부담하는 것이 일반적 관례</li>
+                <li><b>전세대출 중도상환수수료:</b> 버팀목 등 정부지원 대출은 <b>0원</b> (은행 대출은 약 0.5%~1.5%)</li>
+                <li><b>일정 일치:</b> [기존 전세집 세입자 입주일 = 내가 새 집 잔금 치르는 날]로 정확히 맞추기</li>
+                <li><b>유주택자 전환:</b> 소유권 이전 등기 시 유주택자가 되므로 기존 전세대출은 당일 상환 필수</li>
+            </ul>
+        </section>
+
     </div>
 
-    <div class="form-group">
-        <label for="interestRate">대출 금리 (%)</label>
-        <input type="number" step="0.01" id="interestRate" inputmode="decimal" placeholder="예: 3.0" value="3.0">
-    </div>
+    <!-- Tab Switching & Loan Calculation Script -->
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-    <div class="form-group">
-        <label for="loanPeriod">대출 기간 (년)</label>
-        <select id="loanPeriod">
-            <option value="10">10년</option>
-            <option value="15">15년</option>
-            <option value="20">20년</option>
-            <option value="30" selected>30년</option>
-        </select>
-    </div>
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Highlight button
+            const btnIndex = tabName === 'guide' ? 0 : tabName === 'calc' ? 1 : 2;
+            document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
 
-    <div class="form-group">
-        <label for="userType">가구 유형</label>
-        <select id="userType">
-            <option value="shinhon">신혼가구 (최대 3.2억 한도)</option>
-            <option value="first">생애최초 일반가구 (최대 2.4억 한도)</option>
-            <option value="normal">일반가구 (최대 2.0억 한도)</option>
-        </select>
-    </div>
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-    <button type="button" id="calcBtn">계산하기</button>
+        document.getElementById('calcBtn').addEventListener('click', function() {
+            calculate();
+        });
 
-    <div class="result-box" id="resultBox">
-        <div class="result-row">
-            <span class="result-title">최대 대출 가능 금액</span>
-            <span class="result-value" id="maxLoan">0 원</span>
-        </div>
-        <div class="result-row">
-            <span class="result-title">매달 원리금 상환액</span>
-            <span class="result-value" id="monthlyPayment">0 원</span>
-        </div>
-        <div class="result-row">
-            <span class="result-title">필요 최소 순수 잔금</span>
-            <span class="result-value" id="neededCash">0 원</span>
-        </div>
-        <div class="result-row">
-            <span class="result-title">예상 복비 (상한)</span>
-            <span class="result-value" id="brokerFee">0 원</span>
-        </div>
-        <div class="result-row">
-            <span class="result-title">총 준비 권장 현금</span>
-            <span class="result-value highlight" id="totalCash">0 원</span>
-        </div>
-        <div class="result-row" style="flex-direction: column; align-items: flex-start; gap: 5px; margin-top: 10px;">
-            <span class="result-title">💡 자격 신청 가능 부부합산 소득 조건</span>
-            <span id="incomeCondition" style="font-size: 0.85rem; color: #475569; line-height: 1.4;"></span>
-        </div>
-    </div>
-</div>
+        function calculate() {
+            var housePriceInput = document.getElementById('housePrice').value;
+            var interestRateInput = document.getElementById('interestRate').value;
+            
+            var priceMan = parseFloat(housePriceInput);
+            var rate = parseFloat(interestRateInput);
+            var years = parseInt(document.getElementById('loanPeriod').value, 10);
+            var type = document.getElementById('userType').value;
 
-<script>
-document.getElementById('calcBtn').addEventListener('click', function() {
-    calculate();
-});
+            if (isNaN(priceMan) || isNaN(rate) || priceMan <= 0 || rate <= 0) {
+                alert('집값과 금리를 올바르게 입력해주세요.');
+                return;
+            }
 
-function calculate() {
-    var housePriceInput = document.getElementById('housePrice').value;
-    var interestRateInput = document.getElementById('interestRate').value;
-    
-    var priceMan = parseFloat(housePriceInput);
-    var rate = parseFloat(interestRateInput);
-    var years = parseInt(document.getElementById('loanPeriod').value, 10);
-    var type = document.getElementById('userType').value;
+            var price = priceMan * 10000;
+            var ltvLimit = price * 0.7;
 
-    if (isNaN(priceMan) || isNaN(rate) || priceMan <= 0 || rate <= 0) {
-        alert('집값과 금리를 올바르게 입력해주세요.');
-        return;
-    }
+            var maxCap = 200000000;
+            var incomeText = "부부합산 연소득 6,000만원 이하 (순자산 5.11억원 이하)";
 
-    var price = priceMan * 10000;
-    var ltvLimit = price * 0.7;
+            if (type === 'shinhon') {
+                maxCap = 320000000;
+                incomeText = "부부합산 연소득 <b>8,500만원 이하</b> (순자산 5.11억원 이하)";
+            } else if (type === 'first') {
+                maxCap = 240000000;
+                incomeText = "부부합산 연소득 <b>7,000만원 이하</b> (순자산 5.11억원 이하)";
+            }
 
-    var maxCap = 200000000;
-    var incomeText = "부부합산 연소득 6,000만원 이하 (순자산 5.11억원 이하)";
+            var maxHousePrice = (type === 'shinhon') ? 600000000 : 500000000;
+            if (price > maxHousePrice) {
+                alert('선택하신 가구 유형의 디딤돌대출 대상 주택 가격 한도는 ' + (maxHousePrice / 100000000) + '억원 이하입니다.');
+            }
 
-    if (type === 'shinhon') {
-        maxCap = 320000000;
-        incomeText = "부부합산 연소득 <b>8,500만원 이하</b> (순자산 5.11억원 이하)";
-    } else if (type === 'first') {
-        maxCap = 240000000;
-        incomeText = "부부합산 연소득 <b>7,000만원 이하</b> (순자산 5.11억원 이하)";
-    }
+            var finalLoan = Math.min(ltvLimit, maxCap);
 
-    var maxHousePrice = (type === 'shinhon') ? 600000000 : 500000000;
-    if (price > maxHousePrice) {
-        alert('선택하신 가구 유형의 디딤돌대출 대상 주택 가격 한도는 ' + (maxHousePrice / 100000000) + '억원 이하입니다.');
-    }
+            var monthlyRate = (rate / 100) / 12;
+            var totalMonths = years * 12;
+            
+            var tempPow = Math.pow(1 + monthlyRate, totalMonths);
+            var monthlyPayment = (finalLoan * monthlyRate * tempPow) / (tempPow - 1);
 
-    var finalLoan = Math.min(ltvLimit, maxCap);
+            var neededCash = price - finalLoan;
 
-    var monthlyRate = (rate / 100) / 12;
-    var totalMonths = years * 12;
-    
-    var tempPow = Math.pow(1 + monthlyRate, totalMonths);
-    var monthlyPayment = (finalLoan * monthlyRate * tempPow) / (tempPow - 1);
+            var feeRate = 0.004;
+            if (price < 50000000) feeRate = 0.006;
+            else if (price < 200000000) feeRate = 0.005;
 
-    var neededCash = price - finalLoan;
+            var brokerFee = price * feeRate;
+            var estimatedTax = price * 0.011;
+            var totalCash = neededCash + brokerFee + estimatedTax + 2000000;
 
-    var feeRate = 0.004;
-    if (price < 50000000) feeRate = 0.006;
-    else if (price < 200000000) feeRate = 0.005;
+            document.getElementById('maxLoan').innerText = Math.floor(finalLoan).toLocaleString() + ' 원';
+            document.getElementById('monthlyPayment').innerText = Math.floor(monthlyPayment).toLocaleString() + ' 원';
+            document.getElementById('neededCash').innerText = Math.floor(neededCash).toLocaleString() + ' 원';
+            document.getElementById('brokerFee').innerText = Math.floor(brokerFee).toLocaleString() + ' 원 (VAT 별도)';
+            document.getElementById('totalCash').innerText = '약 ' + Math.floor(totalCash / 10000).toLocaleString() + ' 만원 (부대비용 포함)';
+            document.getElementById('incomeCondition').innerHTML = incomeText;
 
-    var brokerFee = price * feeRate;
-    var estimatedTax = price * 0.011;
-    var totalCash = neededCash + brokerFee + estimatedTax + 2000000;
-
-    document.getElementById('maxLoan').innerText = Math.floor(finalLoan).toLocaleString() + ' 원';
-    document.getElementById('monthlyPayment').innerText = Math.floor(monthlyPayment).toLocaleString() + ' 원';
-    document.getElementById('neededCash').innerText = Math.floor(neededCash).toLocaleString() + ' 원';
-    document.getElementById('brokerFee').innerText = Math.floor(brokerFee).toLocaleString() + ' 원 (VAT 별도)';
-    document.getElementById('totalCash').innerText = '약 ' + Math.floor(totalCash / 10000).toLocaleString() + ' 만원 (부대비용 포함)';
-    document.getElementById('incomeCondition').innerHTML = incomeText;
-
-    document.getElementById('resultBox').style.display = 'block';
-}
-</script>
-
+            document.getElementById('resultBox').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
