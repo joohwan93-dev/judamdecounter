@@ -117,7 +117,9 @@
             margin-bottom: 6px;
             font-size: 0.9rem;
         }
-        input, select {
+        
+        /* 체크박스를 제외한 폼 요소 스타일링 */
+        input:not([type="checkbox"]), select {
             width: 100%;
             height: 46px;
             padding: 8px 12px;
@@ -127,6 +129,7 @@
             background-color: #fff;
             -webkit-appearance: none;
         }
+        
         .calc-btn {
             width: 100%;
             height: 48px;
@@ -229,20 +232,22 @@
             font-size: 0.95rem;
             font-weight: bold;
             color: var(--accent);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         .check-item {
             display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.88rem;
+            cursor: pointer;
         }
         .check-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-top: 2px;
+            width: 20px;
+            height: 20px;
             accent-color: var(--accent);
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         /* Process Flow UI */
@@ -364,13 +369,29 @@
                 </ul>
             </div>
 
+            <!-- 수정된 체크리스트 영역 -->
             <div class="checklist-box">
                 <div class="checklist-title">📋 은행 제출 & 필수 서류 체크리스트</div>
-                <div class="check-item"><input type="checkbox"> <span><b>주민등록등본/초본</b> (상세, 최근 1개월 이내)</span></div>
-                <div class="check-item"><input type="checkbox"> <span><b>가족관계증명원 & 혼인관계증명서</b> (상세)</span></div>
-                <div class="check-item"><input type="checkbox"> <span><b>재직증명서 & 원천징수영수증</b> (최근 2년)</span></div>
-                <div class="check-item"><input type="checkbox"> <span><b>매매계약서 원본 & 부동산 거래신고필증</b></span></div>
-                <div class="check-item"><input type="checkbox"> <span><b>인감증명서 2부, 인감도장, 신분증</b></span></div>
+                <label class="check-item">
+                    <input type="checkbox"> 
+                    <span><b>주민등록등본/초본</b> (상세, 최근 1개월 이내)</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox"> 
+                    <span><b>가족관계증명원 & 혼인관계증명서</b> (상세)</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox"> 
+                    <span><b>재직증명서 & 원천징수영수증</b> (최근 2년)</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox"> 
+                    <span><b>매매계약서 원본 & 부동산 거래신고필증</b></span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox"> 
+                    <span><b>인감증명서 2부, 인감도장, 신분증</b></span>
+                </label>
             </div>
         </section>
 
